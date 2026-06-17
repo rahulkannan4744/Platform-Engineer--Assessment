@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="Shared/Shared.csproj" />
+  <Project Path="WorkApi/WorkApi.csproj" />
+  <Project Path="WorkerService/WorkerService.csproj" />
+</Solution>
