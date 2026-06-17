@@ -7,15 +7,14 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:        
+      contents: read 
     environment :
       name: rg-platform-assessment
 
     env:
       ACR_NAME: ${{ secrets.ACR_NAME }}
       IMAGE_TAG: ${{ github.sha }}
-
-    permissions:
-    contents: read
 
     steps:
       - name: Checkout Source
