@@ -1,15 +1,14 @@
 name: Build and Push Images
 
-
 on:
   push:
     branches:
-      - master
+    - master
+workflow_dispatch:
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-
+deploy:
+runs-on: ubuntu-latest
 
 permissions:
   id-token: write
@@ -51,5 +50,4 @@ steps:
     run: |
       docker push \
         ${{ secrets.ACR_NAME }}.azurecr.io/workerservice:${{ github.sha }}
-
- 
+```
