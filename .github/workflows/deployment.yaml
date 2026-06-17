@@ -48,4 +48,4 @@ steps:
     run: |
       docker push \
         ${{ secrets.ACR_NAME }}.azurecr.io/workerservice:${{ github.sha }}
-```
+
