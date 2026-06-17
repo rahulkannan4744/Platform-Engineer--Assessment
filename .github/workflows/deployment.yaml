@@ -2,51 +2,65 @@ name: Build and Push Images
 
 on:
   push:
-
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
-
   deploy:
     runs-on: ubuntu-latest
-    
-permissions:
-  id-token: write
-  contents: read
 
-  steps:
-    - name: Checkout Source
-      uses: actions/checkout@v4
+    env:
+      ACR_NAME: ${{ secrets.ACR_NAME }}
+      IMAGE_TAG: ${{ github.sha }}
 
-    - name: Azure Login
-      uses: azure/login@v2
-      with:
-        client-id: ${{ secrets.AZURE_CLIENT_ID }}
-        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+    permissions:
+      id-token: write
+      contents: read
 
-    - name: Login to ACR
-      run: |
-        az acr login --name ${{ secrets.ACR_NAME }}
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v4
 
-    - name: Build WorkApi Image
-      run: |
-        docker build \
-          -f WorkApi/Dockerfile \
-          -t ${{ secrets.ACR_NAME }}.azurecr.io/workapi:${{ github.sha }} .
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
 
-    - name: Push WorkApi Image
-      run: |
-        docker push \
-          ${{ secrets.ACR_NAME }}.azurecr.io/workapi:${{ github.sha }}
+      - name: Restore Dependencies
+        run: dotnet restore
 
-    - name: Build WorkerService Image
-      run: |
-        docker build \
-          -f WorkerService/Dockerfile \
-          -t ${{ secrets.ACR_NAME }}.azurecr.io/workerservice:${{ github.sha }} .
+      - name: Build Solution
+        run: dotnet build --configuration Release --no-restore
 
-    - name: Push WorkerService Image
-      run: |
-        docker push \
-          ${{ secrets.ACR_NAME }}.azurecr.io/workerservice:${{ github.sha }}
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
+      - name: Login to ACR
+        run: az acr login --name $ACR_NAME
+
+      - name: Build WorkApi Image
+        run: |
+          docker build \
+            -f WorkApi/Dockerfile \
+            -t $ACR_NAME.azurecr.io/workapi:$IMAGE_TAG .
+
+      - name: Push WorkApi Image
+        run: |
+          docker push \
+            $ACR_NAME.azurecr.io/workapi:$IMAGE_TAG
+
+      - name: Build WorkerService Image
+        run: |
+          docker build \
+            -f WorkerService/Dockerfile \
+            -t $ACR_NAME.azurecr.io/workerservice:$IMAGE_TAG .
+
+      - name: Push WorkerService Image
+        run: |
+          docker push \
+            $ACR_NAME.azurecr.io/workerservice:$IMAGE_TAG
