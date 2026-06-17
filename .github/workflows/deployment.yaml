@@ -10,8 +10,7 @@ jobs:
     permissions:        
       contents: read 
     environment :
-      name: rg-platform-assessment
-
+      name: dev
     env:
       ACR_NAME: ${{ secrets.ACR_NAME }}
       IMAGE_TAG: ${{ github.sha }}
