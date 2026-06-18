@@ -38,22 +38,23 @@ resource "azurerm_container_app" "api_app" {
         name  = "APPLICATIONINSIGHTS_CONNECTION_STRING"
         value = azurerm_application_insights.appins.connection_string
       }
+    }
 
-      liveness_probe {
-        transport        = "HTTP"
-        port             = 8080
-        path             = "/health/live"
-        initial_delay    = 5
-        interval_seconds = 10
-      }
+    # PROBES ARE CODED HERE (INSIDE TEMPLATE, OUTSIDE THE CONTAINER BLOCK)
+    liveness_probe {
+      transport        = "HTTP"
+      port             = 8080
+      path             = "/health/live"
+      initial_delay    = 5
+      interval_seconds = 10
+    }
 
-      readiness_probe {
-        transport        = "HTTP"
-        port             = 8080
-        path             = "/health/ready"
-        initial_delay    = 5
-        interval_seconds = 10
-      }
+    readiness_probe {
+      transport        = "HTTP"
+      port             = 8080
+      path             = "/health/ready"
+      initial_delay    = 5
+      interval_seconds = 10
     }
   }
 }
