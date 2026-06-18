@@ -39,6 +39,7 @@ resource "azurerm_container_app" "api_app" {
         value = azurerm_application_insights.appins.connection_string
       }
 
+      # 1. Liveness Probe (Uses initial_delay)
       liveness_probe {
         transport        = "HTTP"
         port             = 8080
@@ -47,12 +48,13 @@ resource "azurerm_container_app" "api_app" {
         interval_seconds = 10
       }
 
+      # 2. Readiness Probe (Uses initial_delay_seconds)
       readiness_probe {
-        transport        = "HTTP"
-        port             = 8080
-        path             = "/health/ready"
-        initial_delay    = 5
-        interval_seconds = 10
+        transport             = "HTTP"
+        port                  = 8080
+        path                  = "/health/ready"
+        initial_delay_seconds = 5
+        interval_seconds      = 10
       }
     }
   }
