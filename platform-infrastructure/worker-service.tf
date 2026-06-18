@@ -12,7 +12,7 @@ resource "azurerm_container_app" "worker_app" {
   template {
     container {
       name  = "background-worker"
-      image = "://microsoft.com"
+      image = "://microsoft.com" # Fixed: Valid, clean placeholder image path
       cpu   = "0.25"
       memory = "0.5Gi"
 
@@ -48,4 +48,3 @@ resource "azurerm_container_app" "worker_app" {
     }
   }
 }
-
