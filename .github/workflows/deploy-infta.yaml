@@ -1,0 +1,41 @@
+name: Provision Azure Infrastructure Only
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: 
+
+jobs:
+  terraform-provision:
+    name: Run Terraform IaC from Scratch
+    runs-on: ubuntu-latest
+    permissions:        
+      contents: read 
+    environment:
+      name: dev
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Authenticate with Azure
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Setup Terraform Engine
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.7.0"
+
+      - name: Execute Terraform Lifecycle
+        working-directory: ./platform-infrastructure
+        run: |
+          echo "🏁 Initializing Terraform..."
+          terraform init
+          
+          echo "🔍 Validating Configuration Syntax..."
+          terraform validate
+          
+          echo "🚀 Deploying Infrastructure Modules..."
+          terraform apply -auto-approve -var="environment=dev"
