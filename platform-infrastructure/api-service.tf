@@ -40,19 +40,19 @@ resource "azurerm_container_app" "api_app" {
       }
 
       liveness_probe {
-        transport             = "HTTP"
-        port                  = 8080
-        path                  = "/health/live"
-        initial_delay_seconds = 5
-        interval_seconds      = 10
+        transport        = "HTTP"
+        port             = 8080
+        path             = "/health/live"
+        initial_delay    = 5
+        interval_seconds = 10
       }
 
       readiness_probe {
-        transport             = "HTTP"
-        port                  = 8080
-        path                  = "/health/ready"
-        initial_delay_seconds = 5
-        interval_seconds      = 10
+        transport        = "HTTP"
+        port             = 8080
+        path             = "/health/ready"
+        initial_delay    = 5
+        interval_seconds = 10
       }
     }
   }
