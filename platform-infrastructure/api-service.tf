@@ -39,12 +39,11 @@ resource "azurerm_container_app" "api_app" {
         value = azurerm_application_insights.appins.connection_string
       }
 
-      # CORRECT POSITION: INSIDE THE CONTAINER BLOCK
       liveness_probe {
         transport        = "HTTP"
         port             = 8080
         path             = "/health/live"
-        initial_delay    = 5  # MUST BE "initial_delay" AS AN INT VALUE
+        initial_delay    = 5
         interval_seconds = 10
       }
 
@@ -52,7 +51,7 @@ resource "azurerm_container_app" "api_app" {
         transport        = "HTTP"
         port             = 8080
         path             = "/health/ready"
-        initial_delay    = 5  # MUST BE "initial_delay" AS AN INT VALUE
+        initial_delay    = 5
         interval_seconds = 10
       }
     }
